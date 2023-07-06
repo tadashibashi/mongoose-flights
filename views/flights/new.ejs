@@ -1,0 +1,39 @@
+<%- include("../partials/header") %>
+
+<a href="/flights">Back to flights</a>
+
+<h1>Create</h1>
+<form method="post" action="/flights">
+    <label>
+        Airline:
+        <select name="airline">
+            <% vars.airlines.forEach(airline => { %>
+                <option value="<%= airline %>"><%= airline %></option>
+            <% }); %>
+        </select>
+    </label>
+
+    <label>
+        Airport:
+        <select name="airport">
+            <% vars.airports.forEach(airport => { %>
+                <option value="<%= airport %>"><%= airport %></option>
+            <% }); %>
+        </select>
+    </label>
+
+    <label>
+        Flight No.:
+        <input name="flightNo" type="number" min="10" max="9999" required/>
+    </label>
+    <% let date = new Date(); %>
+    <% date.setFullYear(date.getFullYear() + 1); %>
+    <label>
+        Departs:
+        <input name="departs" type="datetime-local" value="<%= date.toISOString().substring(0, 16); %>" />
+    </label>
+
+    <button>Submit</button>
+</form>
+
+<%- include("../partials/footer") %>

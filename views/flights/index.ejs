@@ -1,0 +1,50 @@
+<%- include("../partials/header") %>
+
+<style>
+    #main {
+        margin: 4vmin auto;
+        max-width: 800px;
+        width: 80vmin;
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+
+    #create-btn {
+        position: absolute;
+        top: .75vmin;
+        right: 2vmin;
+    }
+</style>
+
+<div class="container mt-4">
+    <a href="/">Go back home</a>
+</div>
+
+
+<main id="main" class="container rounded bg-secondary-subtle">
+
+
+<h1>Flights</h1>
+<a href="/flights/new" id="create-btn"><button class="btn btn-primary">new</button></a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Airport</th>
+            <th>Airline</th>
+            <th>Departs</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <% vars.flights.forEach(flight => { %>
+            <%- include("./partials/flight", {flight}); %>
+        <% }); %>
+    </tbody>
+
+</table>
+
+</main>
+
+<%- include("../partials/footer") %>

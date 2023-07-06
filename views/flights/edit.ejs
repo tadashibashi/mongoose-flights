@@ -1,0 +1,43 @@
+<%- include("../partials/header") %>
+<% const flight = vars.flight; %>
+
+<a href="/flights">Back to flights</a>
+
+<h1>Edit</h1>
+
+<form method="post" action="/flights/<%= flight._id %>?_method=PUT">
+    <label>
+        Airline:
+        <select name="airline">
+            <% vars.airlines.forEach(airline => { %>
+                <option value="<%= airline %>" <%= flight.airline === airline ? "selected" : "" %>><%= airline %></option>
+            <% }); %>
+        </select>
+    </label>
+
+    <label>
+        Airport:
+        <select name="airport">
+            <% vars.airports.forEach(airport => { %>
+                <option value="<%= airport %>"
+                        <%= flight.airport === airport ? "selected" : "" %>><%= airport %>
+                </option>
+            <% }); %>
+        </select>
+    </label>
+
+    <label>
+        Flight No.:
+        <input name="flightNo" type="number" min="10" max="9999" value="<%= flight.flightNo %>" required/>
+    </label>
+
+    <label>
+        Departs:
+        <input name="departs" type="datetime-local"
+               value="<%= flight.departs ? flight.departs.toISOString().slice(0, 16) : "" %>"/>
+    </label>
+
+    <button>Submit</button>
+</form>
+
+<%- include("../partials/footer") %>

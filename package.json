@@ -1,0 +1,24 @@
+{
+  "name": "mongoose-flights",
+  "packageManager": "yarn@3.6.1",
+  "scripts": {
+    "serve:prod": "ts-node --transpile-only ./src/server.ts",
+    "serve:dev": "nodemon ./src/server.ts"
+  },
+  "devDependencies": {
+    "@types/ejs": "^3",
+    "@types/express": "^4",
+    "@types/morgan": "^1",
+    "@types/node": "^20.3.3",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "mongoose": "^7.3.1",
+    "morgan": "^1.10.0"
+  }
+}
