@@ -1,4 +1,5 @@
 <!-- A single Flight tr-->
+
 <tr class="flight">
     <td><p><span><%= flight.flightNo %></span></p></td>
     <td><p><span><%= flight.airport %></span></p></td>
@@ -9,6 +10,12 @@
     <td>
         <a href="/flights/edit/<%= flight._id %>"><button>edit</button></a>
         <a href="/flights/<%= flight._id %>?_method=DELETE"><button>X</button></a>
+    </td>
 
+    <td>
+        <a href="/flights/<%= flight._id %>">
+            <button>details</button>
+        </a>
     </td>
 </tr>
+

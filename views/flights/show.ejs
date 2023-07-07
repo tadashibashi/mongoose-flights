@@ -1,0 +1,39 @@
+<%- include("../partials/header") %>
+<% const flight = vars.flight; %>
+
+<h1>Flight <%= flight.flightNo %></h1>
+<table>
+    <tbody>
+        <tr>
+            <th>Airline</th>
+            <td><%= flight.airline %></td>
+        </tr>
+        <tr>
+            <th>Airport</th>
+            <td><%= flight.airport %></td>
+        </tr>
+        <tr>
+            <th>Departs</th>
+            <td><%= flight.departs ? flight.departs.toLocaleString() : "" %></td>
+        </tr>
+    </tbody>
+</table>
+
+<% if (flight.destinations && flight.destinations.length) { %>
+    <table>
+        <thead>
+            <tr>
+                <th>Destinations</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% flight.destinations.forEach(dest => { %>
+            <tr>
+                <td><%= dest.airport %></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+<% } %>
+
+<%- include("../partials/footer") %>

@@ -1,19 +1,21 @@
 import {Request, Response, NextFunction} from "express";
-import Flight from "../models/Flight";
+import {Flight, airports, airlines} from "../models/Flight";
+import {cleanseBody} from "./util";
+import mongoose from "mongoose";
 
 async function _index(req: Request, res: Response, next: NextFunction) {
     const flights = await Flight.find({}).sort({departs: "desc"});
     res.locals.vars = { flights };
-    console.log(flights);
     res.render("flights");
 }
 
-function _show(req: Request, res: Response): void {
+async function _show(req: Request, res: Response) {
+    const id = req.params["id"];
+    const flight = await Flight.findById(id);
+
+    res.locals.vars = { flight, airports, airlines };
     res.render("flights/show");
 }
-
-const airports = ["AUS", "DFW", "DEN", "LAX", "SAN"];
-const airlines = ["American", "Southwest", "United"];
 
 function _new(req: Request, res: Response, next: NextFunction): void {
     res.locals.vars = {
@@ -23,41 +25,22 @@ function _new(req: Request, res: Response, next: NextFunction): void {
     res.render("flights/new");
 }
 
-async function _create(req: Request, res: Response, next: NextFunction) {
+async function _create(req: Request, res: Response) {
     // set empty form inputs to undefined
-    for (let key in req.body)
-        if (key === "")
-            delete req.body[key];
+    cleanseBody(req.body);
 
-    let airline = req.body["airline"];
-    if (typeof airline === "string")
-        airline = airline.trim();
+    const flight = new Flight(req.body);
 
-    let airport = req.body["airport"];
-    if (typeof airport === "string")
-        airport = airport.trim();
+    // convert destinations into array
+    for (let i = 0; req.body["destination" + i]; ++i) {
+        flight.destinations.push({airport: req.body["destination" + i]});
+    }
 
-    let flightNo = req.body["flightNo"];
-    if (typeof flightNo === "string")
-        flightNo = parseInt(flightNo);
-
-    let departs = req.body["departs"];
-    if (typeof departs === "string")
-        departs = departs.trim();
-
-    console.log(departs)
-
-    await Flight.create({
-        airline,
-        airport,
-        flightNo,
-        departs,
-    });
-
+    flight.save();
     res.redirect("/flights");
 }
 
-async function _edit(req: Request, res: Response, next: NextFunction) {
+async function _edit(req: Request, res: Response) {
     const id = req.params["id"];
     const flight = await Flight.findOne({_id: id});
 
@@ -80,35 +63,35 @@ async function _update(req: Request, res: Response, next: NextFunction) {
         return;
     }
 
-    // set empty form inputs to undefined
-    for (let key in req.body)
-        if (key === "")
-            delete req.body[key];
+    const flight = await Flight.findById(id);
+    if (flight) {
+        cleanseBody(req.body);
 
-    let airline = req.body["airline"];
-    if (typeof airline === "string")
-        airline = airline.trim();
+        // convert destinations into array
+        if (!flight.destinations)
+            flight.destinations = new mongoose.Types.Array();
 
-    let airport = req.body["airport"];
-    if (typeof airport === "string")
-        airport = airport.trim();
+        let dests = flight.destinations;
+        dests.length = 0;
 
-    let flightNo = req.body["flightNo"];
-    if (typeof flightNo === "string")
-        flightNo = parseInt(flightNo);
+        for (let i = 0; req.body["destination" + i]; ++i) {
+            dests.push({airport: req.body["destination" + i]});
+        }
 
-    let departs = req.body["departs"];
-    if (typeof departs === "string")
-        departs = departs.trim();
+        flight.airline = req.body["airline"] || flight.airline;
+        flight.airport = req.body["airport"] || flight.airport;
+        flight.flightNo = req.body["flightNo"] || flight.flightNo;
+        flight.departs = req.body["departs"] ? new Date(req.body["departs"]) : flight.departs;
 
-    await Flight.updateOne({_id: id},{
-        airline,
-        airport,
-        flightNo,
-        departs,
-    });
+        await flight.updateOne(req.body);
 
-    res.redirect("/flights");
+        res.redirect("/flights");
+    } else {
+        // error, could not find flight with id
+        console.warn("controllers/flights.edit: tried to show edit page for Flight with id: ",
+            id, " but it was not found in database");
+        res.redirect("/flights");
+    }
 }
 
 async function _delete(req: Request, res: Response, next: NextFunction) {

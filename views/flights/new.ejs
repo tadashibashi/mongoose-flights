@@ -1,4 +1,6 @@
 <%- include("../partials/header") %>
+<% const airports = vars.airports; %>
+<% const airlines = vars.airlines; %>
 
 <a href="/flights">Back to flights</a>
 
@@ -7,7 +9,7 @@
     <label>
         Airline:
         <select name="airline">
-            <% vars.airlines.forEach(airline => { %>
+            <% airlines.forEach(airline => { %>
                 <option value="<%= airline %>"><%= airline %></option>
             <% }); %>
         </select>
@@ -16,7 +18,7 @@
     <label>
         Airport:
         <select name="airport">
-            <% vars.airports.forEach(airport => { %>
+            <% airports.forEach(airport => { %>
                 <option value="<%= airport %>"><%= airport %></option>
             <% }); %>
         </select>
@@ -33,7 +35,102 @@
         <input name="departs" type="datetime-local" value="<%= date.toISOString().substring(0, 16); %>" />
     </label>
 
+    <p>Destinations:</p>
+    <div id="destinations">
+
+    </div>
+
+    <div>
+        <button type="button" id="dest-add-btn">+</button>
+        <button type="button" id="dest-sub-btn">-</button>
+        <label>
+            <select id="dest-selection"></select>
+        </label>
+    </div>
+
+
     <button>Submit</button>
 </form>
+
+<script>
+    window.addEventListener("load", () => {
+        const airportEl = document.querySelector("select[name='airport']");
+        const destEl = document.getElementById("destinations");
+        const destSelectEl = document.getElementById("dest-selection");
+        const addBtn = document.getElementById("dest-add-btn");
+        const subBtn = document.getElementById("dest-sub-btn");
+        const airports = [
+            <% airports.forEach(airport => { %>
+                "<%= airport %>",
+            <% }); %>
+        ];
+
+        function updateSelection() {
+            destSelectEl.innerHTML = "";
+
+            airports.forEach(airport => {
+                let show = true;
+
+                if (airport === airportEl.value) {
+                    show = false;
+                } else {
+                    for (let i = 0; i < destEl.children.length; ++i) {
+                        if (destEl.children[i].value === airport) {
+                            show = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (show) {
+                    console.log("added ", airport);
+                    const optEl = document.createElement("option");
+                    optEl.setAttribute("value", airport);
+                    optEl.innerText = airport;
+
+                    destSelectEl.appendChild(optEl);
+                }
+            });
+        }
+
+        function stripDestinations() {
+            for (let i = 0; i < destEl.children.length;) {
+                if (destEl.children[i].value === airportEl.value) {
+                    destEl.removeChild(destEl.children[i]);
+                } else {
+                    ++i;
+                }
+            }
+        }
+
+        airportEl.addEventListener("input", evt => {
+            stripDestinations();
+            updateSelection();
+        });
+
+        addBtn.addEventListener("click", evt => {
+            if (destSelectEl.value === "") return;
+
+            const input = document.createElement("input");
+            input.innerText = destSelectEl.value;
+            input.setAttribute("name", "destination" + destEl.children.length);
+            input.setAttribute("value", destSelectEl.value);
+            input.setAttribute("readonly", "");
+            destEl.appendChild(input);
+            updateSelection();
+        });
+
+        subBtn.addEventListener("click", evt => {
+            const input = destEl.lastChild;
+            console.log(input);
+            if (input) {
+                destEl.removeChild(input);
+                updateSelection();
+            }
+        });
+
+        updateSelection();
+    });
+</script>
 
 <%- include("../partials/footer") %>
