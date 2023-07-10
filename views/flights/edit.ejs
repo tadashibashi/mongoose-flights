@@ -2,6 +2,7 @@
 <% const flight = vars.flight; %>
 <% const airports = vars.airports %>
 <% const airlines = vars.airlines %>
+<% const tickets = vars.tickets %>
 
 <a href="/flights">Back to flights</a>
 
@@ -55,7 +56,12 @@
             <select id="dest-selection"></select>
         </label>
     </div>
+    <br/>
+    <%- include("../tickets/partials/tickets-all", {tickets}); %>
 
+    <a href="/flights/<%=flight._id%>/tickets/new"><button type="button">New Ticket</button></a>
+    <br/>
+    <br/>
     <button>Submit</button>
 </form>
 

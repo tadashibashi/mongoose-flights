@@ -1,0 +1,22 @@
+<%- include("../partials/header") %>
+<% const flight = vars.flight; %>
+
+<h1>New Ticket for Flight #<%= flight.flightNo %></h1>
+<p>From <%=flight.airport + " with " + flight.airline + " departing on " + flight.departs.toLocaleDateString() + " at " + flight.departs.toLocaleTimeString(); %></p>
+<p>To <%= flight.destinations ? flight.destinations.map(dest => dest.airport).toString() : "unknown"; %></p>
+
+<form method="POST" action="/flights/<%=flight._id%>/tickets">
+    <label>
+        Seat (e.g. "A13") <input name="seat" type="text" pattern="[A-Z][1-9]\d?" required/>
+    </label>
+
+    <label>
+        Price <input name="price" type="number" min="0" step="0.01"  required />
+    </label>
+
+    <br/>
+    <button>Add Ticket</button>
+</form>
+
+
+<%- include("../partials/footer") %>

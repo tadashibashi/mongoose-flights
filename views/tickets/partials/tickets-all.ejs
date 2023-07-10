@@ -1,0 +1,24 @@
+<!-- A table of tickets -->
+
+<% if (tickets.length) { %>
+    <h2>Tickets</h2>
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Seat</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% tickets.forEach(ticket => { %>
+            <tr>
+                <td></td>
+                <td><%= ticket.seat %></td>
+                <td><%= ticket.price %></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+
+<% } %>

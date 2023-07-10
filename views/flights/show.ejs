@@ -1,5 +1,8 @@
 <%- include("../partials/header") %>
 <% const flight = vars.flight; %>
+<% const tickets = vars.tickets; %>
+
+<a href="/flights">Back to flights</a>
 
 <h1>Flight <%= flight.flightNo %></h1>
 <table>
@@ -35,5 +38,7 @@
         </tbody>
     </table>
 <% } %>
+
+<%- include("../tickets/partials/tickets-all", {tickets}); %>
 
 <%- include("../partials/footer") %>

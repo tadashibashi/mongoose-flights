@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express";
 import {Flight, airports, airlines} from "../models/Flight";
 import {cleanseBody} from "./util";
 import mongoose from "mongoose";
+import Ticket from "../models/Ticket";
 
 async function _index(req: Request, res: Response, next: NextFunction) {
     const flights = await Flight.find({}).sort({departs: "desc"});
@@ -13,7 +14,9 @@ async function _show(req: Request, res: Response) {
     const id = req.params["id"];
     const flight = await Flight.findById(id);
 
-    res.locals.vars = { flight, airports, airlines };
+    const tickets = await Ticket.find({flight: id}).sort({seat: "asc"});
+
+    res.locals.vars = { flight, airports, airlines, tickets };
     res.render("flights/show");
 }
 
@@ -43,9 +46,10 @@ async function _create(req: Request, res: Response) {
 async function _edit(req: Request, res: Response) {
     const id = req.params["id"];
     const flight = await Flight.findOne({_id: id});
+    const tickets = await Ticket.find({flight: id});
 
     if (flight) {
-        res.locals.vars = { flight, airports, airlines };
+        res.locals.vars = { flight, airports, airlines, tickets };
         res.render("flights/edit");
     } else {
         // error, could not find flight with id
